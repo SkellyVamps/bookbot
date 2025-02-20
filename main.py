@@ -1,35 +1,45 @@
-def character_count(text):
-    text = text.lower()
-    char_count = {}
-
-    for char in text:
-        if char in char_count:
-            char_count[char] += 1
-        else:
-            char_count[char] = 1
-
-    return char_count
-
 def main():
-    with open("books/frankenstein.txt") as f:
-        file_contents = f.read()
-        word_count = len(file_contents.split())
-        char_count = character_count(file_contents)
-        char_list = list(char_count.items())
+    book_path = "books/frankenstein.txt"
+    text = get_text(book_path)
+    word_count = get_word_count(text)
+    char_count = get_char_count(text)
+    sorted_char = get_sorted_list(char_count)
 
-        print("--- Begin report ---")
-        print(f"{word_count} words found in the document\n")
+    print(f"--- Begin report of {book_path} ---")
+    print(f"{word_count} words found in the document\n")
 
-        def alphabetical_sort(item):
-            return item[0]
+    for item in sorted_char:
+        if item["char"].isalpha():
+          print(f"the '{item['char']}' character was found {item['num']} times")
+    
+    print(f"\n--- End report ---")
 
-        char_list.sort(key=alphabetical_sort)
-        
-        for char, count in char_list:
-            for c in char:
-                if c.isalpha():
-                    print(f"the '{char}' character was found {count} times")
-        
-        print("--- End Report ---")
+def sort_on(d):
+    return d["num"]
+
+def get_sorted_list(char_count):
+    sorted_list = []
+    for ch in char_count:
+        sorted_list.append({"char": ch, "num": char_count[ch]})
+    sorted_list.sort(reverse=True, key=sort_on)
+    return sorted_list
+
+def get_char_count(text):
+    chars = {}
+    for c in text:
+        lowered = c.lower()
+        if lowered in chars:
+            chars[lowered] += 1
+        else:
+            chars[lowered] = 1
+    return chars
+
+def get_word_count(text):
+    words = text.split()
+    return len(words)
+
+def get_text(path):
+    with open(path) as f:
+        return f.read()
 
 main()
